@@ -29,5 +29,14 @@ class PlanetCard:
 #   These cards will be used in the shop and gameplay systems to upgrade specific poker hands.
 
 PLANETS = {
-
+    "Mercury": PlanetCard("Mercury", "boosts One Pair hands", price=5, chips=5, mult=1.2),
+    "Venus": PlanetCard("Venus", "enhances Two Pair hands", price=6, chips=8, mult=1.3),
+    "Earth": PlanetCard("Earth", "strengthens Three of a Kind hands", price=7, chips=10, mult=1.4),
+    "Mars": PlanetCard("Mars", "improves Straight hands", price=8, chips=12, mult=1.5),
+    "Jupiter": PlanetCard("Jupiter", "amplifies Flush hands", price=9, chips=15, mult=1.6),
+    "Saturn": PlanetCard("Saturn", "boosts Full House hands", price=10, chips=18, mult=1.7),
+    "Uranus": PlanetCard("Uranus", "enhances Four of a Kind hands", price=11, chips=20, mult=1.8),
+    "Neptune": PlanetCard("Neptune", "strengthens Straight Flush hands", price=12, chips=25, mult=2.0),
+    "Pluto": PlanetCard("Pluto", "mysterious power for any hand", price=13, chips=30, mult=2.2),
+    "Sun": PlanetCard("Sun", "ultimate boost for the entire hand", price=15, chips=40, mult=2.5)
 }
