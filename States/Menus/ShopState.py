@@ -97,8 +97,41 @@ class ShopState(State):
     #   Each key should be the name of a hand (e.g., "Two Pair", "Straight"), and each value should be a dictionary
     #   containing its "chips", "multiplier", and "level" fields.
     #   Remember: the Sun upgrades all hands, while other planets upgrade only their specific one.
+    HAND_SCORES = {
+        "High Card": {"chips": 1, "multiplier": 1.0, "level": 1},
+        "One Pair": {"chips": 2, "multiplier": 1.1, "level": 1},
+        "Two Pair": {"chips": 4, "multiplier": 1.2, "level": 2},
+        "Three of a Kind": {"chips": 6, "multiplier": 1.3, "level": 2},
+        "Straight": {"chips": 8, "multiplier": 1.5, "level": 3},
+        "Flush": {"chips": 10, "multiplier": 1.7, "level": 3},
+        "Full House": {"chips": 15, "multiplier": 2.0, "level": 4},
+        "Four of a Kind": {"chips": 25, "multiplier": 2.5, "level": 5},
+        "Straight Flush": {"chips": 40, "multiplier": 3.0, "level": 6},
+    }
+
     def activatePlanet(self, planet):
-        keys = HAND_SCORES.keys()
+        if not planet:
+            return
+
+        if planet.name.lower() == "sun":
+            for hand in HAND_SCORES.values():
+                hand["chips"] += planet.chips
+                hand["multiplier"] *= planet.mult
+            print(f"[SHOP] Sun activated: +{planet.chips} chips, x{planet.mult} multiplier to all hands.")
+            return
+
+        found = False
+        for hand_name in HAND_SCORES.keys():
+            if hand_name.lower() in planet.description.lower():
+                HAND_SCORES[hand_name]["chips"] += planet.chips
+                HAND_SCORES[hand_name]["multiplier"] *= planet.mult
+                print(
+                    f"[SHOP] {planet.name} activated: +{planet.chips} chips, x{planet.mult} multiplier to {hand_name}.")
+                found = True
+                break
+
+        if not found:
+            print(f"[SHOP] Planet {planet.name} could not find a valid hand in description to apply effects.")
 
     # ---------- Helpers ----------
     def _wrap_lines(self, text, font, max_width):
