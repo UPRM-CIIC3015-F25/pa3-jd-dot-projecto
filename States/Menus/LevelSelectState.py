@@ -90,12 +90,39 @@ class LevelSelectState(State):
                 #   on which boss is active.
                 #   Finally, make sure to reset the player’s round score to 0 at the end of this setup.
                 #   Avoid unnecessary repetition—use clear condition structure to make the logic readable.
+                #self.playerInfo.roundScore = 0
+                current_boss = lm.curSubLevel.bossLevel
+                if current_boss == "The Water":
+                    self.playerInfo.discardLimit = max(0, self.playerInfo.discardLimit - 1)
+                elif current_boss == "The Mark":
+                    self.playerInfo.handLimit = 4
+                elif current_boss == "The House":
+                    self.playerInfo.mustHoldPair = True
+                elif current_boss == "The Hook":
+                    self.playerInfo.blockFaceCards = True
+                elif current_boss == "The Manacle":
+                    self.playerInfo.resetDiscardEachHand = True
+                elif current_boss == "The Needle":
+                    self.playerInfo.doublePoints = True
+                    self.playerInfo.oneBustLoss = True
+                elif current_boss == "The Club":
+                    self.playerInfo.handLimit += 1
+                elif current_boss == "The Goad":
+                    self.playerInfo.extraChipCost = 1
+                else:
+                    self.playerInfo.discardLimit = self.playerInfo.defaultDiscardLimit
+                    self.playerInfo.handLimit = self.playerInfo.defaultHandLimit
+                    self.playerInfo.mustHoldPair = False
+                    self.playerInfo.blockFaceCards = False
+                    self.playerInfo.resetDiscardEachHand = False
+                    self.playerInfo.doublePoints = False
+                    self.playerInfo.oneBustLoss = False
+                    self.playerInfo.extraChipCost = 0
+
                 self.playerInfo.roundScore = 0
                 
-                # Set target score for the new sublevel
                 self.playerInfo.score = self.playerInfo.levelManager.curSubLevel.score
                 
-                # Prepare for the nextState : GameState
                 self.deckManager.resetDeck = True
                 self.isFinished = True
                 self.nextState = "GameState"
@@ -116,6 +143,14 @@ class LevelSelectState(State):
         #   what unique restriction or ability that boss applies during the round.
         #   This dictionary will later be used to look up and apply special effects based on which boss is active.
         boss_abilities = {
+            "The Water": "Your discard limit is reduced by 1 this round.",
+            "The Mark": "Draw only 4 cards at the start of each hand.",
+            "The House": "Must hold at least one pair to score this round.",
+            "The Hook": "You cannot use face cards (J, Q, K).",
+            "The Manacle": "Discard pile resets after every hand.",
+            "The Needle": "All point values are doubled—but lose if you bust once.",
+            "The Club": "Your hand limit increases by +1.",
+            "The Goad": "Every play costs 1 additional chip."
 
         }
 
