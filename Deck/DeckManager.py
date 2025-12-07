@@ -125,7 +125,7 @@ class DeckManager:
             # Ensure a small uniform padding so the sprite isn't cut too tight
             pad = 4
             if subImg.get_width() > pad * 2 and subImg.get_height() > pad * 2:
-                padded = pygame.Surface(((subImg.get_width() + pad * 2) - 3, subImg.get_height() + pad * 2), pygame.SRCALPHA)
+                padded = pygame.Surface(((subImg.get_width() + pad * 2) , subImg.get_height() + pad * 2), pygame.SRCALPHA)
                 padded.fill((0, 0, 0, 0))
                 padded.blit(subImg, (pad, pad))
                 subImg = padded
