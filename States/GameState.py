@@ -852,34 +852,46 @@ class GameState(State):
         #       self.activated_jokers.add("joker card name")
         #   The last line ensures the Joker is visibly active and its effects are properly applied.
 
-        procrastinate = False
+        def apply_jokers(self):
 
-        # commit modified player multiplier and chips
-        self.playerInfo.playerMultiplier = hand_mult
-        self.playerInfo.playerChips = total_chips
-        self.playerInfo.curHandOfPlayer = hand_name
-        self.playerInfo.curHandText = self.playerInfo.textFont1.render(self.playerInfo.curHandOfPlayer, False, 'white')
+            hand_mult = 1.0
+            total_chips = sum(card.value for card in self.playerInfo.curHand)
 
-        # compute amount that will be added to round when timer expires
-        added_to_round = total_chips * hand_mult
-        # Procrastination doubles the final hand's addition
-        if 'procrastinate' in locals() and procrastinate:
-            added_to_round *= 2
-        self.pending_round_add = added_to_round  # defer actual addition until timer ends
 
-        # prepare on-screen feedback
-        self.playedHandTextSurface = self.playerInfo.textFont1.render(hand_name, True, 'yellow')
-        score_breakdown_text = f"(Hand: {hand_chips} + Cards: {card_chips_sum}) Chips | x{hand_mult} Mult -> +{added_to_round}"
-        self.scoreBreakdownTextSurface = self.playerInfo.textFont2.render(score_breakdown_text, True, 'white')
+            for joker in self.owned_jokers:
+                if joker == "The Joker":
+                    hand_mult += 4
+                elif joker == "Michael Myers":
+                    import random
+                    hand_mult += random.randint(0, 23)
+                elif joker == "Fibonacci":
+                    count = sum(1 for c in self.playerInfo.curHand if c.rank.value in [1, 2, 3, 5, 8])
+                    hand_mult += count * 8
+                elif joker == "Gauntlet":
+                    total_chips += 250
+                    self.playerInfo.hand_size -= 2
+                elif joker == "Ogre":
+                    hand_mult += 3 * len(self.owned_jokers)
+                elif joker == "Straw Hat":
+                    total_chips += 100 - 5 * self.playerInfo.hands_played
+                elif joker == "Hog Rider":
+                    if self.playerInfo.curHandType == "Straight":
+                        total_chips += 100
+                elif joker == "? Block":
+                    if len(self.playerInfo.curHand) == 4:
+                        total_chips += 4
+                elif joker == "Hogwarts":
+                    aces = sum(1 for c in self.playerInfo.curHand if c.rank.value == 1)
+                    hand_mult += 4 * aces
+                    total_chips += 20 * aces
+                elif joker == "802":
+                    if self.playerInfo.amountOfHands == 0:
+                        total_chips *= 2
 
-        self.playHandStartTime = pygame.time.get_ticks()
-        self.playHandActive = True
-        self.cardsSelectedRect.clear()
+                self.activated_jokers.add(joker)
 
-        start_x, start_y, spacing = 20, 20, 95
-        for i, card in enumerate(self.cardsSelectedList):
-            w, h = card.scaled_image.get_width(), card.scaled_image.get_height()
-            self.cardsSelectedRect[card] = pygame.Rect(start_x + i * spacing, start_y, w, h)
+            self.playerInfo.playerMultiplier = hand_mult
+            self.playerInfo.playerChips = total_chips
 
     # TODO (TASK 4) - The function should remove one selected card from the player's hand at a time, calling itself
     #   again after each removal until no selected cards remain (base case). Once all cards have been
